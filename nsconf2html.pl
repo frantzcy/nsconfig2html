@@ -49,11 +49,40 @@ my $out;
 open($out, ">" ,"$dest") or die "Cloud not open output file\n";
 open my $info, $file or die "Could not open $file: $!";
 
-print $out "<html><head><h2>Currently only LB config is displayed in html table format<h2></head><body>";
+# No apologies !  print $out "<html><head><h2>Currently only LB config is displayed in html table format<h2></head><body>";
+print $out "<html><head><h2><center>Netscaler Configurations</center><h2></head><body>";
+
+print $out "<div style=\"text-align: center;\">
+<form action=\"\" method=\"POST\" align=\"right\" id=\"post_form\">
+<center>
+<input type=\"button\" value=\"Server\" onClick=\"show('ServerName')\">
+<input type=\"button\" value=\"Service\" onClick=\"show('ServiceName')\">
+<input type=\"button\" value=\"vserver\" onClick=\"show('VirtualServerName')\">
+<input type=\"button\" value=\"vserver+\" onClick=\"show('VirtualServerName2')\">
+</center>
+</form>
+</div>\n";
+
+print $out "
+<script type=\"text/javascript\">
+function show(obj){
+//  document.getElementById('ServerName').style.display = 'block' ;
+	var el = document.getElementById(obj);
+
+	if ( el.style.display != 'none' ) {
+		el.style.display = 'none';
+	} else {
+		el.style.display = 'block';
+	}
+};
+</script>
+";
+
 
 #first pass to detect servers
 print "Server list:\n";
 
+print $out "<div id='ServerName' style=\"display: none;\">\n";
 print $out "<table border=1pt><tr><td>Server Name</td><td>IP</td></tr>\n";
 while( my $line = <$info>)  {   
    
@@ -66,11 +95,13 @@ while( my $line = <$info>)  {
         }
 }
 print $out "</table><br><br>\n";
+print $out "</div>\n";
 
 close $info;
 open $info, $file or die "Could not open $file: $!";
 
 print "Service List:\n";
+print $out "<div id='ServiceName' style=\"display: none;\">\n";
 print $out "<table border=1pt><tr><td>Service Name</td><td>Server</td><td>Port</td></tr>";
 while( my $line = <$info>)  {   
    
@@ -85,7 +116,7 @@ while( my $line = <$info>)  {
         }
 }
 print $out "</table><br><br>\n";
-
+print $out "</div>\n";
 
 close $info;
 open $info, $file or die "Could not open $file: $!";
@@ -111,6 +142,7 @@ while( my $line = <$info>)  {
     
 }
 
+print $out "<div id='VirtualServerName' style=\"display: none;\">\n";
 print $out "<table border=1pt><tr><td>Virtual Server Name</td><td>Service Name</td></tr>\n";
 print "VS services bindings:\n";
 #print "=======================\n".Dumper(%bindings)."\n++++++++++++++++++++";
@@ -132,9 +164,12 @@ for (keys %bindings){
      }
 }
 print $out "</table><br><br>\n";
+print $out "</div>\n";
+
 open $info, $file or die "Could not open $file: $!";
 
 print "Virtual Server List:\n";
+print $out "<div id='VirtualServerName2' style=\"display: none;\">\n";
 print $out "<table border=1pt><tr><td>Virtual Server Name</td><td>Category</td><td>Value</td></tr>\n";
 #first pass to detect virtual servers
 while( my $line = <$info>)  {   
@@ -184,5 +219,6 @@ while( my $line = <$info>)  {
     }
 }
 print $out "</table><br><br>\n";
+print $out "</div>\n";
 
 close $info;
