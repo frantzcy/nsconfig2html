@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 #este archivo toma un ns.conf y extrae los balanceos de carga para poder construir las
 # tablas que hacen parte de la documentación. Las tablas resultantes estan en formato HTML.
 
@@ -24,10 +25,19 @@ sub extract_params{
 }
 
 
-my $file = $ARGV[0];
+my $file = shift;
+my $dest = shift;
+
 if($file !~ /conf/){
 die "Not a valid argumet\n";
 }
+
+if(!$dest){
+  $dest = "conf.html";
+}
+
+
+
 
 my %server = ();
 my %service = ();
@@ -36,7 +46,7 @@ my %bindings = ();
 #$bindings{"TEST"} = [];
 
 my $out;
-open($out, ">" ,"conf.html") or die "Cloud not open output file\n";
+open($out, ">" ,"$dest") or die "Cloud not open output file\n";
 open my $info, $file or die "Could not open $file: $!";
 
 print $out "<html><head><h2>Currently only LB config is displayed in html table format<h2></head><body>";
